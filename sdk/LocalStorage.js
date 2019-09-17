@@ -30,7 +30,6 @@ class LocalStorage {
             if (path[path.length - 1] !== "/") {
                 path += "/";
             }
-            console.log(this.root + path);
             let items = await readdir(this.root + path, { withFileTypes: true });
 
             for (let item of items) {
@@ -89,7 +88,6 @@ class LocalStorage {
             if (isFile) {
                 await unlink(this.root + path);
             } else if (isDir) {
-                console.log("Delete folder: ", this.root + path);
                 await rimraf(this.root + path);
             }
         } catch (err) {

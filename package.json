@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/semeniuk/vuetify-file-browser-server#readme",
   "dependencies": {
+    "aws-sdk": "^2.529.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv-defaults": "^1.0.2",
