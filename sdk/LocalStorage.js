@@ -4,7 +4,11 @@ const os = require("os"),
     readdir = fsPromises.readdir,
     stat = fsPromises.stat,
     rename = fsPromises.rename,
-    unlink = fsPromises.unlink;
+    unlink = fsPromises.unlink,
+    lstat = fsPromises.lstat,
+    util = require("util"),
+    rimraf = util.promisify(require("rimraf"));
+
 
 class LocalStorage {
     constructor(root) {
@@ -72,9 +76,22 @@ class LocalStorage {
         }
     }
 
+    async mkdir(path) {
+        throw new Error("TBD");
+    }
+
     async delete(path) {
         try {
-            await unlink(this.root + path);
+            let stat = await lstat(this.root + path),
+                isDir = stat.isDirectory(),
+                isFile = stat.isFile();
+
+            if (isFile) {
+                await unlink(this.root + path);
+            } else if (isDir) {
+                console.log("Delete folder: ", this.root + path);
+                await rimraf(this.root + path);
+            }
         } catch (err) {
             console.error(err);
         }
