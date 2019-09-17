@@ -4,7 +4,8 @@
   "description": "Server for vuetify-file-browser",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "mkdir": "mkdir upload && mkdir files && mkdir files/test",
+    "start": "npm run mkdir && node index.js"
   },
   "repository": {
     "type": "git",
