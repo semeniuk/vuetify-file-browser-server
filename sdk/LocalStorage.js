@@ -76,7 +76,7 @@ class LocalStorage {
     }
 
     async mkdir(path) {
-        throw new Error("TBD");
+        await fsPromises.mkdir(this.root + path, { recursive: true });
     }
 
     async delete(path) {

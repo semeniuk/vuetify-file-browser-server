@@ -14,6 +14,11 @@ module.exports = function (storages, options = {}) {
             return res.sendStatus(200);
         });
 
+        router.post(`/${storage.code}/mkdir`, async function (req, res) {
+            await storage.mkdir(req.query.path, req.query.name);
+            return res.sendStatus(200);
+        });
+
         router.post(`/${storage.code}/delete`, async function (req, res) {
             await storage.delete(req.query.path);
             return res.sendStatus(200);

@@ -73,7 +73,11 @@ class S3Storage {
     }
 
     async mkdir(path) {
-        throw new Error("TBD");
+        path = path.slice(1) + "/";
+        await this.S3.upload({
+            Key: path,
+            Body: ""
+        }).promise();
     }
 
     async deleteFile(key) {
