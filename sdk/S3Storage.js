@@ -57,7 +57,9 @@ class S3Storage {
 
     async upload(path, files) {
         try {
+            const fs = require("fs");
             path = path.slice(1);
+
             for (let file of files) {
                 var fileStream = fs.createReadStream(file.path);
                 await this.S3.upload({
@@ -74,10 +76,42 @@ class S3Storage {
         throw new Error("TBD");
     }
 
+    async deleteFile(key) {
+        await this.S3.deleteObject({ Key: key }).promise();
+    }
+
+    async deleteDir(prefix) {
+        const listedObjects = await this.S3.listObjectsV2({
+            Prefix: prefix
+        }).promise();
+
+        if (listedObjects.Contents.length === 0) {
+            return;
+        }
+
+        const deleteParams = {
+            Delete: { Objects: [] }
+        };
+
+        listedObjects.Contents.forEach(({ Key }) => {
+            deleteParams.Delete.Objects.push({ Key });
+        });
+
+        await this.S3.deleteObjects(deleteParams).promise();
+
+        if (listedObjects.IsTruncated) {
+            await this.deleteDir(prefix);
+        }
+    }
+
     async delete(path) {
         try {
             path = path.slice(1);
-            await this.S3.deleteObject({ Key: path }).promise();
+            if (path[path.length - 1] == "/") {
+                await this.deleteDir(path);
+            } else {
+                await this.deleteFile(path);
+            }
         } catch (err) {
             console.error(err);
         }
