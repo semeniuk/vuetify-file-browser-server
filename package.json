@@ -1,7 +1,7 @@
 {
   "name": "vuetify-file-browser-server",
-  "version": "1.0.0",
-  "description": "Server for vuetify-file-browser",
+  "version": "1.0.1",
+  "description": "Server for Vuetify File Browser",
   "main": "index.js",
   "scripts": {
     "mkdir": "mkdir upload && mkdir files && mkdir files/test",

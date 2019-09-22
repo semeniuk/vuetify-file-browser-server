@@ -12,7 +12,7 @@ const express = require('express'),
     os = require("os"),
     path = require("path");
 
-//enable CORS
+// enable CORS
 app.use(cors());
 
 // parse incoming request body
@@ -27,6 +27,7 @@ if (process.env.FILEBROWSER_UPLOAD_PATH) {
     uploadPath = os.tmpdir();
 }
 
+// get AWS configuration from process.env
 const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_S3_BUCKET } = process.env;
 
 const LocalStorage = require("./sdk").LocalStorage;
