@@ -2,18 +2,28 @@ const nodePath = require("path"),
     AWS = require("aws-sdk");
 
 class S3Storage {
-    constructor(awsAccessKeyId, awsSecretKey, awsRegion, awsBucket) {
+    constructor(accessKeyId, secretKey, region, bucket, rootPath) {
         this.code = "s3";
         AWS.config.update({
-            accessKeyId: awsAccessKeyId,
-            secretAccessKey: awsSecretKey,
-            region: awsRegion
+            accessKeyId: accessKeyId,
+            secretAccessKey: secretKey,
+            region: region
         });
 
         this.S3 = new AWS.S3({
             apiVersion: "2006-03-01",
-            params: { Bucket: awsBucket }
-        })
+            params: { Bucket: bucket }
+        });
+
+        if (rootPath && rootPath[0] === "/") {
+            rootPath = rootPath.slice(1);
+        }
+
+        if (rootPath && rootPath[rootPath.length - 1] !== "/") {
+            rootPath += "/";
+        }
+
+        this.rootPath = rootPath;
     }
 
     async list(path) {
@@ -23,13 +33,13 @@ class S3Storage {
 
             let data = await this.S3.listObjectsV2({
                 Delimiter: "/",
-                Prefix: path.slice(1)
+                Prefix: this.rootPath + path.slice(1)
             }).promise();
 
             for (let prefix of data.CommonPrefixes) {
                 let dir = {
                     type: "dir",
-                    path: "/" + prefix.Prefix
+                    path: "/" + prefix.Prefix.slice(this.rootPath.length)
                 };
                 dir.basename = dir.name = nodePath.basename(dir.path);
                 dirs.push(dir);
@@ -38,7 +48,7 @@ class S3Storage {
             for (let item of data.Contents.filter(item => item.Key != data.Prefix)) {
                 let file = {
                     type: "file",
-                    path: "/" + item.Key,
+                    path: "/" + item.Key.slice(this.rootPath.length),
                     size: item.Size,
                     lastModified: item.LastModified,
                     eTag: item.ETag
@@ -58,7 +68,7 @@ class S3Storage {
     async upload(path, files) {
         try {
             const fs = require("fs");
-            path = path.slice(1);
+            path = this.rootPath + path.slice(1);
 
             for (let file of files) {
                 var fileStream = fs.createReadStream(file.path);
@@ -73,7 +83,7 @@ class S3Storage {
     }
 
     async mkdir(path) {
-        path = path.slice(1) + "/";
+        path = this.rootPath + path.slice(1) + "/";
         await this.S3.upload({
             Key: path,
             Body: ""
@@ -81,12 +91,12 @@ class S3Storage {
     }
 
     async deleteFile(key) {
-        await this.S3.deleteObject({ Key: key }).promise();
+        await this.S3.deleteObject({ Key: this.rootPath + key }).promise();
     }
 
     async deleteDir(prefix) {
         const listedObjects = await this.S3.listObjectsV2({
-            Prefix: prefix
+            Prefix: this.rootPath + prefix
         }).promise();
 
         if (listedObjects.Contents.length === 0) {

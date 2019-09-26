@@ -15,8 +15,8 @@ class LocalStorage {
         this.code = "local";
         if (root) {
             this.root = root;
-        } else if (process.env.FILEBROWSER_ROOT_PATH) {
-            this.root = nodePath.resolve(process.cwd(), process.env.FILEBROWSER_ROOT_PATH);
+        } else if (process.env.FILEBROWSER_LOCAL_ROOT_PATH) {
+            this.root = nodePath.resolve(process.cwd(), process.env.FILEBROWSER_LOCAL_ROOT_PATH);
         } else {
             this.root = os.homedir();
         }

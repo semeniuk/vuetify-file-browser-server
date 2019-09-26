@@ -28,7 +28,7 @@ if (process.env.FILEBROWSER_UPLOAD_PATH) {
 }
 
 // get AWS configuration from process.env
-const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_S3_BUCKET } = process.env;
+const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_S3_BUCKET, FILEBROWSER_AWS_ROOT_PATH } = process.env;
 
 const LocalStorage = require("./sdk").LocalStorage;
 const S3Storage = require("./sdk").S3Storage;
@@ -36,7 +36,7 @@ const S3Storage = require("./sdk").S3Storage;
 // setup routes
 app.use("/storage", require("./sdk").Router([
     new LocalStorage(),
-    new S3Storage(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_S3_BUCKET)
+    new S3Storage(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_S3_BUCKET, FILEBROWSER_AWS_ROOT_PATH)
 ], {
     uploadPath
 }));

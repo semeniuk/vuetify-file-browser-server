@@ -1,9 +1,6 @@
 # Vuetify File Browser Server & Backend SDK
 
-Backend for https://www.npmjs.com/package/vuetify-file-browser
-
-## Settings
-
+Backend for [Vuetify File Browser Component](https://www.npmjs.com/package/vuetify-file-browser)
 
 ## Usage
 
@@ -43,12 +40,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // get AWS configuration from process.env
-const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_S3_BUCKET } = process.env;
+const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_S3_BUCKET, FILEBROWSER_AWS_ROOT_PATH } = process.env;
 
 // setup routes
 app.use("/storage", sdk.Router([
     new sdk.LocalStorage(path.resolve(__dirname, "./files")),
-    new sdk.S3Storage(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_S3_BUCKET)
+    new sdk.S3Storage(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_S3_BUCKET, FILEBROWSER_AWS_ROOT_PATH)
 ], {
     uploadPath: path.resolve(__dirname, "./upload")
 }));
